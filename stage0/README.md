@@ -41,8 +41,15 @@
 > 人工來源不是次等來源。Camillo 最賺的幾筆都來自親眼所見。
 > 差別只在於它進不了自動化管線，所以要靠假說卡的「人工觀察」欄位手動接進來。
 
+## 沒有財經背景的話，先讀這兩份
+
+1. **[concepts.md](concepts.md)** — 名詞白話速成，10 分鐘。只讀「第一區」就夠開始
+2. **[log/EXAMPLE-worked-card.md](log/EXAMPLE-worked-card.md)** — 一張完整填好的範例卡
+   （虛構），含逐欄教學註解，還示範了兩張死掉的卡長什麼樣
+
 ## 檔案
 
+- [concepts.md](concepts.md) — 名詞速成
 - [checklist.md](checklist.md) — 五層檢查清單，每張卡都要跑一遍
 - [hypothesis-card.md](hypothesis-card.md) — 假說卡模板，複製到 log/ 底下
 - `log/` — 你的假說卡都放這裡，一張一個檔
