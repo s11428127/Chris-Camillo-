@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>訊號窗口 · 社交套利研究工具</title>
+<meta name="description" content="把 Chris Camillo 的社交套利方法重寫成可執行系統的台灣版。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="row">
+    <a class="brand" href="index.html">訊號窗口</a>
+    <a class="tab" href="index.html" aria-current="page">概觀</a>
+    <a class="tab" href="concepts.html">名詞速成</a>
+    <a class="tab" href="checklist.html">五層檢查</a>
+    <a class="tab" href="example.html">範例卡</a>
+  </div>
+</nav>
+
+<main>
+<div class="wrap stack">
+
+  <header class="page-head">
+    <div class="eyebrow">Social Arbitrage · 台灣版</div>
+    <h1>訊號窗口</h1>
+    <p class="lede">把 Chris Camillo 的社交套利方法，重寫成 2026 年可執行的系統。不是複製他的工具，是複製他的<strong>思考順序</strong>，並補上他當年沒有的語意運算能力。</p>
+  </header>
+
+  <div class="note">
+    <p>Camillo 當年的 alpha 來自「<strong>誰先看到</strong>」。那個窗口已經被機構買走了 —— 包括他自己賣掉的 TickerTags。今天散戶還握得住的優勢，是「<strong>誰真的讀懂</strong>」：一萬則留言在講什麼、是不是購買意圖、對應到哪家公司的哪條產品線、佔營收幾 %。</p>
+    <p style="margin-top:12px">速度差正在歸零，語意差正在打開。<strong>這個專案只賭後者。</strong></p>
+  </div>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">先讀這個</div>
+        <h2>三句話版本</h2>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>1　趨勢真的還不夠</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">要佔那家公司營收夠大，股價才會動。趨勢看對但買到「這件事對它不痛不癢」的公司，是散戶最常見的死法。</p>
+        </div>
+        <div class="card">
+          <h3>2　市場知道的沒價值</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">新聞報過了、股價已經漲過了，就丟掉。消息是真的沒有用，錢已經被賺走了。</p>
+        </div>
+        <div class="card">
+          <h3>3　先用假錢跑三個月</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">你現在還不知道自己準不準。紙上交易累積 20–30 筆假說，證明有邊之後再談真的。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">為什麼在台灣做</div>
+        <h2>台灣人有三個別人拿不到的東西</h2>
+        <p class="lede">台灣的消費趨勢常常對不到可交易標的 —— 台股以製造與半導體為主，純消費股少。但換個角度看，這裡有三個美國散戶完全複製不了的優勢。</p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <div class="eyebrow">A</div>
+          <h3 style="margin-top:6px">繁中社群是機構盲區</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">量化基金對英文 Reddit、TikTok 的覆蓋已經飽和，但幾乎沒人在對 PTT、Dcard、巴哈做語意分析。這是還沒被套利掉的資訊差。</p>
+        </div>
+        <div class="card">
+          <div class="eyebrow">B</div>
+          <h3 style="margin-top:6px">站在供應鏈上游</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">竹科的徵才、加班、抽單傳聞，時間上比美國分析師早。這同時對應得到台股與美股半導體。</p>
+        </div>
+        <div class="card">
+          <div class="eyebrow">C</div>
+          <h3 style="margin-top:6px">每月 10 日的月營收</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">全球罕見的高頻硬數據。你這個月的判斷，下個月 10 號就知道對不對 —— 學習速度比美股季報快三倍。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">系統架構</div>
+        <h2>五層管線</h2>
+        <p class="lede">順序不能換。任何一層擋下來的假說就不進雷達 —— 這個「擋下來」的紀律，比找到訊號更重要。</p>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>層</th><th>做什麼</th><th>階段 0 怎麼做</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">01 採集</td><td>消費現場與供應鏈現場的原始文本、榜單、職缺</td><td>自己翻 PTT、104</td></tr>
+            <tr><td class="mono">02 語意</td><td><strong>主題浮現</strong>取代關鍵字警報；判斷購買意圖</td><td>自己讀，判斷是不是新的</td></tr>
+            <tr><td class="mono">03 映射</td><td>趨勢 → 標的 → <strong>營收曝險 %</strong>，低於門檻退件</td><td>翻年報找產品比重表</td></tr>
+            <tr><td class="mono">04 濾網</td><td>「市場已經知道了嗎」→ 已知度分數 0–100</td><td>Google + 法說逐字稿 + 看股價</td></tr>
+            <tr><td class="mono">05 紀律</td><td>假說日誌 + 到期強制回顧 + 個人校準</td><td>寫卡、設到期日</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn">
+        <p><strong>第 03、04 層的工作是「否決」，不是發現。</strong> 它們擋掉的爛點子會比其他三層加起來還多。這兩層做得越狠，你的勝率越高。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">關鍵技術升級</div>
+        <h2>主題浮現，而不是關鍵字爆量</h2>
+      </div>
+      <p class="lede">關鍵字監控有個死結：<strong>新趨勢的關鍵字你事先不知道</strong>。所以不做 keyword alert，改成把留言 embedding 後做流式分群，偵測「一個過去不存在的主題群突然長出來」。</p>
+      <p class="lede">這是 Camillo 當年做不到、而現在一個人就能做的事 —— 也是這個專案跟市面上所有聲量監測工具最大的差別。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">實作順序</div>
+        <h2>先證明你有邊，再寫程式</h2>
+        <p class="lede">最常見的失敗是先花三個月做爬蟲和圖表，然後才發現自己根本挑不出好假說。順序要反過來。</p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <div class="eyebrow">階段 0 · 現在</div>
+          <h3 style="margin-top:6px">零程式碼</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">用<a href="checklist.html">五層檢查工具</a>手動跑，累積 20–30 筆假說。全部紙上交易。產出是「知道自己準不準」。</p>
+        </div>
+        <div class="card">
+          <div class="eyebrow">階段 1</div>
+          <h3 style="margin-top:6px">一個領域自動化</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">只鎖命中率最高的那一類。Python 排程接三個源，Claude API 做意圖標註與曝險抽取。</p>
+        </div>
+        <div class="card">
+          <div class="eyebrow">階段 2</div>
+          <h3 style="margin-top:6px">濾網與校準</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">已知度分數自動化、時間差圖、個人校準報告。推播只在「曝險夠高且已知度夠低」時才響。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">誠實的部分</div>
+        <h2>開始之前要接受的四件事</h2>
+      </div>
+      <div class="grid two">
+        <div class="card" style="border-top:3px solid var(--bad)">
+          <h3>倖存者偏差</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">用同樣方法賠光的人不會出書。他的高年化是自陳數字，且來自高度集中加槓桿的部位。方法可學，結果不可假設。</p>
+        </div>
+        <div class="card" style="border-top:3px solid var(--bad)">
+          <h3>窗口本來就在縮</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">另類資料的商品化有一部分正是他推動的。純聲量訊號的半衰期只會越來越短。</p>
+        </div>
+        <div class="card" style="border-top:3px solid var(--bad)">
+          <h3>AI 會很有說服力地講錯話</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">營收曝險一定要能點回財報原文段落。看起來合理但沒有出處的數字，是最貴的一種幻覺。</p>
+        </div>
+        <div class="card" style="border-top:3px solid var(--bad)">
+          <h3>資料與合規邊界</h3>
+          <p class="lede" style="margin-top:8px;font-size:14.5px">爬蟲看服務條款，個資不落地。社交套利吃的是公開資訊的<strong>解讀差</strong>，不是取得差。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">下一步</div>
+        <h2>今天就能開始</h2>
+      </div>
+      <ol style="font-size:15.5px">
+        <li>花 10 分鐘讀<a href="concepts.html">名詞速成</a>的第一區（只讀第一區就夠）</li>
+        <li>花 5 分鐘看<a href="example.html">範例卡</a>，感覺一下要寫到多細</li>
+        <li>翻 PTT Tech_Job 最近一週，找一則讓你「咦？」的討論</li>
+        <li>打開<a href="checklist.html">五層檢查工具</a>，跑一遍，產出你的第一張卡</li>
+      </ol>
+      <div class="note">
+        <p>第一張卡多半會死在半路。<strong>那是正常的，也是重點。</strong> 死掉的卡跟活的一樣值錢 —— 三個月後它們會告訴你，你最常在哪一層失手。</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>訊號窗口 · 這是研究工具，不是投資建議。所有分數與門檻都需要用你自己的實測資料校準。</p>
+    <p style="margin-top:8px"><a href="https://github.com/s11428127/Chris-Camillo-">原始碼與完整計畫在 GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

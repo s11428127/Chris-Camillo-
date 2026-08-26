@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五層檢查 · 訊號窗口</title>
+<meta name="description" content="邊滑 PTT 邊跑五層檢查，自動算已知度分數，產出一張 Markdown 假說卡。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="row">
+    <a class="brand" href="index.html">訊號窗口</a>
+    <a class="tab" href="index.html">概觀</a>
+    <a class="tab" href="concepts.html">名詞速成</a>
+    <a class="tab" href="checklist.html" aria-current="page">五層檢查</a>
+    <a class="tab" href="example.html">範例卡</a>
+  </div>
+</nav>
+
+<main>
+<div class="wrap stack">
+
+  <header class="page-head">
+    <div class="eyebrow">階段 0 工具</div>
+    <h1>五層檢查</h1>
+    <p class="lede">從 01 跑到 05。<strong>任何一層沒過就停，不要往下想。</strong>跑完按「產生 Markdown」，複製回 repo 的 <code class="mono">stage0/log/</code>。</p>
+  </header>
+
+  <div class="note">
+    <p>手機上也能用 —— 邊滑 PTT 邊填。內容會<strong>自動存在這台裝置的瀏覽器裡</strong>，不會上傳到任何地方，關掉再回來還在。換一台裝置就看不到了，所以填完記得複製走。</p>
+  </div>
+
+  <form id="cardform" autocomplete="off">
+
+    <!-- ===== 卡片基本資料 ===== -->
+    <section>
+      <div class="card">
+        <h3>這張卡在講什麼</h3>
+        <label class="fld">
+          <span class="lbl">標的代號</span>
+          <input type="text" data-f="ticker" placeholder="例：2330 台積電（還不知道就先空著）">
+        </label>
+        <label class="fld">
+          <span class="lbl">一句話標題</span>
+          <input type="text" data-f="headline" placeholder="例：液冷散熱模組拉貨，客戶要求提前交期">
+        </label>
+        <div class="grid two" style="margin-top:14px">
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">開卡日</span>
+            <input type="date" data-f="opened">
+          </label>
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">到期日（綁哪次月營收或財報）</span>
+            <input type="date" data-f="due">
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 01 ===== -->
+    <div class="layer" data-layer="01">
+      <div class="head">
+        <span class="num">01</span>
+        <h3>採集 — 我到底看到了什麼？</h3>
+        <span class="state mono"></span>
+      </div>
+      <div class="body">
+        <label class="check"><input type="checkbox" data-f="c1a"><span>我能用一句話說出「跟上週不一樣」的<strong>具體事實</strong>嗎？（不是感覺，是事實）</span></label>
+        <label class="check"><input type="checkbox" data-f="c1b"><span>這是<strong>幾個人</strong>講的？還是一個人講得很大聲？</span></label>
+        <label class="check"><input type="checkbox" data-f="c1c"><span>來源是<strong>消費／供應鏈現場</strong>，不是股票討論區</span></label>
+
+        <div class="note bad" style="margin-top:14px">
+          <p>⚠️ 如果來源是股票版、財經新聞、投顧、YouTube 分析頻道 —— <strong>直接丟掉</strong>。那裡的資訊照定義已經是「市場知道的」。</p>
+        </div>
+
+        <label class="fld">
+          <span class="lbl">我看到什麼（具體，附連結）</span>
+          <textarea data-f="seen" placeholder="例：PTT Tech_Job 8/20 起出現 3 篇不同帳號的討論，都提到同一家散熱廠週末加班、產線滿載…"></textarea>
+        </label>
+        <label class="fld">
+          <span class="lbl">來源</span>
+          <input type="text" data-f="source" placeholder="例：PTT Tech_Job（3 篇，不同帳號，8/20–8/24）">
+        </label>
+        <label class="fld">
+          <span class="lbl">人工觀察（朋友、學長、FB 社團、親眼看到的）</span>
+          <input type="text" data-f="human" placeholder="這一欄常常是最值錢的">
+        </label>
+        <label class="fld">
+          <span class="lbl">這一層退件嗎？</span>
+          <select data-f="k1" data-kill>
+            <option value="">通過，繼續</option>
+            <option value="來源即市場共識">❌ 來源即市場共識</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- ===== 02 ===== -->
+    <div class="layer" data-layer="02">
+      <div class="head">
+        <span class="num">02</span>
+        <h3>語意 — 這些人在講什麼？</h3>
+        <span class="state mono"></span>
+      </div>
+      <div class="body">
+        <label class="check"><input type="checkbox" data-f="c2a"><span>是<strong>購買／擴產訊號</strong>，不是抱怨、玩梗、例行閒聊</span></label>
+        <label class="check"><input type="checkbox" data-f="c2b"><span>講的是<strong>訂單／產能／人力</strong>的變化，不是股價本身</span></label>
+        <label class="check"><input type="checkbox" data-f="c2c"><span>這個主題<strong>三個月前不存在</strong>（新冒出來的比變大聲的值錢）</span></label>
+        <label class="check"><input type="checkbox" data-f="c2d"><span>有<strong>第二個獨立來源</strong>指向同一件事</span></label>
+
+        <label class="fld">
+          <span class="lbl">訊號類型</span>
+          <select data-f="sigtype">
+            <option value="">選一個</option>
+            <option>擴產 / 產能滿載</option>
+            <option>抽單 / 砍單</option>
+            <option>人力異動 / 大舉徵才</option>
+            <option>新產品需求</option>
+            <option>其他</option>
+          </select>
+        </label>
+        <div class="grid two" style="margin-top:14px">
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">獨立來源數</span>
+            <input type="text" data-f="sources_n" placeholder="例：2 類（PTT ×3、學長 ×1）">
+          </label>
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">三個月前存在嗎</span>
+            <input type="text" data-f="was_before" placeholder="例：5–6 月同版沒有類似討論">
+          </label>
+        </div>
+        <label class="fld">
+          <span class="lbl">這一層退件嗎？</span>
+          <select data-f="k2" data-kill>
+            <option value="">通過，繼續</option>
+            <option value="雜訊 / 單一來源">❌ 雜訊 / 單一來源</option>
+            <option value="長期常態，不是新訊號">❌ 長期常態，不是新訊號</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- ===== 03 ===== -->
+    <div class="layer" data-layer="03">
+      <div class="head">
+        <span class="num">03</span>
+        <h3>映射 — 誰會賺到錢，賺多少？</h3>
+        <span class="state mono"></span>
+      </div>
+      <div class="body">
+        <div class="note warn">
+          <p>這是散戶最常死的地方：趨勢是真的，但只佔母公司營收 3%，股價根本不會動。</p>
+        </div>
+
+        <label class="check" style="margin-top:8px"><input type="checkbox" data-f="c3a"><span>我講得出<strong>具體代號</strong>（講不出來就是還沒想清楚）</span></label>
+        <label class="check"><input type="checkbox" data-f="c3b"><span>我查得到<strong>營收佔比的數字</strong>，而且指得出財報哪一段</span></label>
+        <label class="check"><input type="checkbox" data-f="c3c"><span>我查過有沒有<strong>更純的標的</strong>（設備、材料、載板、測試）</span></label>
+
+        <div class="grid two" style="margin-top:14px">
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">營收曝險（%）</span>
+            <input type="number" data-f="exposure" min="0" max="100" placeholder="58">
+          </label>
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">財報出處（沒有出處就是幻覺）</span>
+            <input type="text" data-f="exposure_src" placeholder="例：2025 年報 p.42 產品營收比重表">
+          </label>
+        </div>
+        <label class="fld">
+          <span class="lbl">有沒有更純的標的</span>
+          <input type="text" data-f="purer" placeholder="例：查過上游水冷板供應商，未上市，排除">
+        </label>
+        <label class="fld">
+          <span class="lbl">這一層退件嗎？</span>
+          <select data-f="k3" data-kill>
+            <option value="">通過，繼續</option>
+            <option value="曝險不足">❌ 曝險不足</option>
+            <option value="找不到可交易標的">❌ 找不到可交易標的</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- ===== 04 ===== -->
+    <div class="layer" data-layer="04">
+      <div class="head">
+        <span class="num">04</span>
+        <h3>濾網 — 市場已經知道了嗎？</h3>
+        <span class="state mono"></span>
+      </div>
+      <div class="body">
+        <div class="note">
+          <p><strong>這是整張卡的靈魂。</strong>四個問題選完，下面會自動算出已知度分數。</p>
+        </div>
+
+        <label class="fld">
+          <span class="lbl">Google 搜過了嗎，有幾篇產業媒體報導？</span>
+          <select data-f="s_news" data-score>
+            <option value="0">0 篇 — 沒人報過</option>
+            <option value="15">1–3 篇 — 有零星報導</option>
+            <option value="30">很多篇 — 已經是新聞了</option>
+          </select>
+        </label>
+
+        <label class="fld">
+          <span class="lbl">有券商／分析師報告提過嗎？</span>
+          <select data-f="s_analyst" data-score>
+            <option value="0">沒查到</option>
+            <option value="25">有，已經被寫進報告</option>
+          </select>
+        </label>
+
+        <label class="fld">
+          <span class="lbl">上次法說會管理層提過嗎？</span>
+          <select data-f="s_call" data-score>
+            <option value="0">沒提</option>
+            <option value="10">模糊帶過</option>
+            <option value="25">明確講過</option>
+          </select>
+        </label>
+
+        <label class="fld">
+          <span class="lbl">股價過去一個月？</span>
+          <select data-f="s_price" data-score>
+            <option value="0">沒什麼動，跟大盤差不多</option>
+            <option value="10">小漲 5–15%</option>
+            <option value="20">大漲超過 15% — 有人比你早知道</option>
+          </select>
+        </label>
+
+        <div class="scorebox">
+          <div>
+            <div class="lbl mono" style="font-size:10.5px;letter-spacing:.1em;color:var(--muted)">已知度</div>
+            <div class="val mono" id="scoreval">0</div>
+          </div>
+          <div class="meterwrap">
+            <div class="meter"><span id="scorebar" style="width:0%"></span></div>
+            <div class="meterlab"><span>0 窗口敞開</span><span>已 price in 100</span></div>
+            <div class="verdict" id="scoreverdict" style="margin-top:8px">窗口敞開 — 值得做</div>
+          </div>
+        </div>
+
+        <label class="fld">
+          <span class="lbl">這一層退件嗎？（60 分以上就該退）</span>
+          <select data-f="k4" data-kill>
+            <option value="">通過，繼續</option>
+            <option value="已知度過高">❌ 已知度過高</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- ===== 05 ===== -->
+    <div class="layer" data-layer="05">
+      <div class="head">
+        <span class="num">05</span>
+        <h3>紀律 — 我憑什麼，以及我怎麼認錯？</h3>
+        <span class="state mono"></span>
+      </div>
+      <div class="body">
+        <label class="fld">
+          <span class="lbl">為什麼法人／分析師看不到這件事？</span>
+          <textarea data-f="blindspot" placeholder="說不出來 = 他們大概看得到。例：這是產線層級的資訊，不會出現在公開財務數據裡，法人不會系統性去讀繁中匿名論壇…"></textarea>
+        </label>
+
+        <label class="fld">
+          <span class="lbl">什麼證據會證明我錯？（寫成具體可觀察的條件）</span>
+          <textarea data-f="falsify" placeholder="例：1. 9 月營收月增未達 +10%　2. 10 月營收回落　3. 發現加班是良率不佳導致重工，不是需求增加"></textarea>
+        </label>
+
+        <div class="note warn">
+          <p>「什麼會證明我錯」這欄逼你事前就想好出場。<strong>填不出來的卡不准建倉。</strong></p>
+        </div>
+
+        <div class="grid two" style="margin-top:14px">
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">假想部位（% NAV）</span>
+            <input type="number" data-f="size" min="0" max="100" placeholder="3">
+          </label>
+          <label class="fld" style="margin-top:0">
+            <span class="lbl">進場價（紙上）</span>
+            <input type="text" data-f="entry" placeholder="今天收盤價">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn" id="gen">產生 Markdown</button>
+      <button type="button" class="btn ghost" id="copy">複製 Markdown</button>
+      <button type="button" class="btn ghost" id="reset">清空重來</button>
+      <span class="saved" id="savedmark" style="align-self:center"></span>
+    </div>
+
+    <div id="outwrap" hidden>
+      <p class="lede" style="margin-top:20px;font-size:14px">複製下面全部，在 repo 的 <code class="mono">stage0/log/</code> 開一個新檔，檔名建議：<strong class="mono" id="fname"></strong></p>
+      <textarea id="output" readonly aria-label="產生的 Markdown 假說卡"></textarea>
+    </div>
+
+  </form>
+
+  <section>
+    <div class="stack">
+      <div class="stack-sm">
+        <div class="eyebrow">每月 10 日</div>
+        <h2>月營收驗證迴圈</h2>
+      </div>
+      <p class="lede">翻出所有到期的卡，回答三個問題：</p>
+      <ul style="font-size:15.5px">
+        <li>月營收有沒有往我預期的方向走？</li>
+        <li>如果對了，是我<strong>看對了</strong>，還是<strong>運氣</strong>？</li>
+        <li>如果錯了，是<strong>訊號錯</strong>（地面情報不準）、<strong>映射錯</strong>（曝險估錯），還是<strong>濾網錯</strong>（市場早知道）？</li>
+      </ul>
+      <div class="note">
+        <p>分類記錄死因。三個月後你會清楚看到自己在哪一層最弱 —— <strong>那才是要補的地方</strong>。</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>訊號窗口 · 這是研究工具，不是投資建議。階段 0 全部紙上交易，不要下真單。</p>
+  </div>
+</footer>
+
+<script src="assets/checklist.js"></script>
+</body>
+</html>
