@@ -1,0 +1,486 @@
+<title>訊號窗口</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#F6F8F7;
+  --surface:#FFFFFF;
+  --surface-2:#EFF3F2;
+  --ink:#12201E;
+  --ink-2:#3A4B48;
+  --muted:#667773;
+  --rule:#DBE3E0;
+  --accent:#0D6B62;
+  --accent-soft:#E0EFEC;
+  --warn:#9A5B12;
+  --warn-soft:#F6ECDD;
+  --bad:#8F3232;
+  --good:#2F6B3C;
+  --shadow:0 1px 2px rgba(18,32,30,.05), 0 8px 24px -16px rgba(18,32,30,.25);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B1211;
+    --surface:#121B1A;
+    --surface-2:#182322;
+    --ink:#E7EEEC;
+    --ink-2:#B4C3C0;
+    --muted:#7C8D89;
+    --rule:#22302E;
+    --accent:#4ECFC0;
+    --accent-soft:#12312D;
+    --warn:#D69B52;
+    --warn-soft:#2E2416;
+    --bad:#D98080;
+    --good:#77B98A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B1211;
+  --surface:#121B1A;
+  --surface-2:#182322;
+  --ink:#E7EEEC;
+  --ink-2:#B4C3C0;
+  --muted:#7C8D89;
+  --rule:#22302E;
+  --accent:#4ECFC0;
+  --accent-soft:#12312D;
+  --warn:#D69B52;
+  --warn-soft:#2E2416;
+  --bad:#D98080;
+  --good:#77B98A;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Noto Sans TC","Hiragino Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-weight:400;
+  line-height:1.85;
+  -webkit-font-smoothing:antialiased;
+  margin:0;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px 120px}
+section{padding:56px 0;border-top:1px solid var(--rule)}
+
+h1,h2,h3{font-family:"Noto Serif TC",Georgia,serif;text-wrap:balance;margin:0}
+h2{font-size:clamp(24px,3.4vw,32px);font-weight:700;letter-spacing:.01em;line-height:1.4}
+h3{font-size:17px;font-weight:700;line-height:1.5}
+p{margin:0}
+.lede{color:var(--ink-2);max-width:64ch}
+.stack{display:flex;flex-direction:column;gap:20px}
+.stack-sm{display:flex;flex-direction:column;gap:10px}
+
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+header.mast{padding:72px 0 12px}
+.mast h1{font-size:clamp(38px,6.6vw,62px);font-weight:900;line-height:1.15;letter-spacing:-.01em}
+.mast .sub{font-size:clamp(16px,2vw,19px);color:var(--ink-2);max-width:60ch;margin-top:18px}
+.thesis{
+  margin-top:32px;padding:20px 24px;background:var(--surface);
+  border:1px solid var(--rule);border-left:3px solid var(--accent);
+  box-shadow:var(--shadow);
+}
+.thesis b{color:var(--accent)}
+
+.era{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:8px}
+.era>div{background:var(--surface);padding:22px}
+.era .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.era ul{margin:12px 0 0;padding-left:18px;color:var(--ink-2);font-size:15px}
+.era li{margin-bottom:8px}
+.era .now .tag{color:var(--accent)}
+
+.layers{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.layer{background:var(--surface);display:grid;grid-template-columns:64px 1fr 260px;gap:24px;padding:22px 24px;align-items:start}
+.layer .n{font-family:"IBM Plex Mono",monospace;font-size:26px;font-weight:500;color:var(--accent);line-height:1.2}
+.layer .body{color:var(--ink-2);font-size:15px;margin-top:6px}
+.layer .how{
+  background:var(--surface-2);padding:12px 14px;font-size:13px;color:var(--ink-2);
+  font-family:"IBM Plex Mono",monospace;line-height:1.75;
+}
+.layer .how b{color:var(--ink);font-weight:600}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14.5px}
+th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface-2)}
+tr:last-child td{border-bottom:none}
+td.src{font-weight:500;white-space:nowrap}
+.pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 8px;border-radius:2px;letter-spacing:.04em;white-space:nowrap}
+.pill.hi{background:var(--accent-soft);color:var(--accent)}
+.pill.mid{background:var(--warn-soft);color:var(--warn)}
+
+.screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.screen{background:var(--surface);border:1px solid var(--rule);box-shadow:var(--shadow);display:flex;flex-direction:column}
+.screen .cap{padding:16px 18px;border-bottom:1px solid var(--rule)}
+.screen .cap p{font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.65}
+.screen .demo{padding:18px;background:var(--surface-2);flex:1}
+
+.card{background:var(--surface);border:1px solid var(--rule);padding:14px}
+.card .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card .tk{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px}
+.card .txt{font-size:13px;color:var(--ink-2);margin-top:6px;line-height:1.6}
+.metric{display:flex;justify-content:space-between;font-size:12px;font-family:"IBM Plex Mono",monospace;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
+.metric b{color:var(--ink)}
+
+.gauge{height:6px;background:var(--rule);position:relative;margin-top:6px}
+.gauge span{position:absolute;left:0;top:0;bottom:0;background:var(--good)}
+.gauge.warn span{background:var(--warn)}
+.gaugelab{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:6px}
+
+.lagchart{display:block;width:100%;height:auto}
+
+.log{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:2;color:var(--ink-2)}
+.log .k{color:var(--muted)}
+.log .v{color:var(--ink)}
+
+.scorebars{display:flex;flex-direction:column;gap:9px;font-family:"IBM Plex Mono",monospace;font-size:12px}
+.scorebars .row{display:grid;grid-template-columns:76px 1fr 34px;gap:10px;align-items:center}
+.bar{height:8px;background:var(--rule)}
+.bar span{display:block;height:100%;background:var(--accent)}
+.bar.low span{background:var(--bad)}
+
+.phases{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.phase{background:var(--surface);padding:22px 24px;display:grid;grid-template-columns:130px 1fr;gap:24px}
+.phase .when{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:.08em;padding-top:4px}
+.phase .when em{display:block;font-style:normal;color:var(--muted);margin-top:2px}
+.phase ul{margin:10px 0 0;padding-left:18px;color:var(--ink-2);font-size:15px}
+.phase li{margin-bottom:6px}
+
+.risks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.risk{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--bad);padding:18px}
+.risk p{font-size:14px;color:var(--ink-2);margin-top:8px;line-height:1.7}
+
+footer{padding:40px 0 0;border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
+
+@media (max-width:760px){
+  .era{grid-template-columns:1fr}
+  .layer{grid-template-columns:1fr;gap:12px}
+  .layer .n{font-size:20px}
+  .phase{grid-template-columns:1fr;gap:8px}
+}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow">Social Arbitrage · 產品藍圖</div>
+  <h1>訊號窗口</h1>
+  <p class="sub">一套把 Chris Camillo 的社交套利方法，重寫成 2026 年可執行系統的規格書。不是複製他的工具，是複製他的<strong>思考順序</strong>——並補上他當年沒有的語意運算能力。</p>
+  <div class="thesis">
+    <p>Camillo 當年的 alpha 來自「<b>誰先看到</b>」。那個窗口已經被機構買走了——包括他自己賣掉的 TickerTags。今天散戶還握得住的優勢，是「<b>誰真的讀懂</b>」：一萬則留言在講什麼、是不是購買意圖、對應到哪家公司的哪條產品線、佔營收幾 %。速度差正在歸零，語意差正在打開。這個 app 只賭後者。</p>
+  </div>
+</header>
+
+<section>
+  <div class="stack">
+    <div class="stack-sm">
+      <div class="eyebrow">優勢遷移</div>
+      <h2>同一套邏輯，不同的稀缺資源</h2>
+      <p class="lede">兩個時代要問的問題完全一樣（這會影響股價嗎？市場知道了嗎？），但「答得出來」所需要的稀缺能力換了位置。系統裡每一個模組都要對準右邊那欄。</p>
+    </div>
+    <div class="era">
+      <div>
+        <div class="tag">2007 – 2015　人力優勢</div>
+        <ul>
+          <li>稀缺的是<strong>注意力</strong>：肯每晚泡工程師論壇數 AWS 提及次數的人很少</li>
+          <li>關鍵字提及量本身就是 alpha，Google Trends 幾乎沒人拿來看盤</li>
+          <li>華爾街的資料延遲以「週」計（保險理賠報告、通路調查）</li>
+          <li>網紅影響力完全在分析師的認知盲區之外</li>
+        </ul>
+      </div>
+      <div class="now">
+        <div class="tag">2026　語意優勢</div>
+        <ul>
+          <li>稀缺的是<strong>詮釋</strong>：提及量人人有，但「這些人是要買、要罵、還是在玩梗」沒人分得清</li>
+          <li>另類資料已商品化，量化基金買同一批 feed，純速度賽你必輸</li>
+          <li>真正的難點變成<strong>營收映射</strong>：趨勢紅了，但只佔母公司營收 3%，多數散戶死在這</li>
+          <li>LLM 讓一個人能做過去一個研究團隊的閱讀量——這是新的不對稱</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="stack">
+    <div class="stack-sm">
+      <div class="eyebrow">系統架構</div>
+      <h2>五層管線</h2>
+      <p class="lede">順序不能換。每天排程跑一次，任何一層擋下來的假說就不進雷達——這個「擋下來」的紀律，比找到訊號更重要。</p>
+    </div>
+    <div class="layers">
+
+      <div class="layer">
+        <div class="n">01</div>
+        <div>
+          <h3>採集　地面訊號</h3>
+          <p class="body">廣度優先，別只盯股票討論區——股票討論區的資訊照定義已經是「市場知道的」。要抓的是消費現場：留言、評論、排行榜、徵才職缺。</p>
+        </div>
+        <div class="how">Reddit API · YouTube<br>Apify / 第三方 TikTok<br>App Store 榜 · Steam<br>Amazon BSR · 職缺 JD<br>Google Trends</div>
+      </div>
+
+      <div class="layer">
+        <div class="n">02</div>
+        <div>
+          <h3>語意　主題浮現，而不是關鍵字爆量</h3>
+          <p class="body">最關鍵的升級。關鍵字警報有個死結：<strong>新趨勢的關鍵字你事先不知道</strong>。改成把留言 embedding、做流式分群，偵測「一個過去不存在的主題群突然長出來」。再用 LLM 對每群標註情緒、購買意圖、是真需求還是迷因。</p>
+        </div>
+        <div class="how">embedding + HDBSCAN<br>時序 z-score / STL<br><b>Claude</b> 標註意圖分類<br>輸出：主題卡 + 加速度</div>
+      </div>
+
+      <div class="layer">
+        <div class="n">03</div>
+        <div>
+          <h3>映射　趨勢 → 可交易標的 → 營收曝險</h3>
+          <p class="body">趨勢對誰有利、佔它營收多少、有沒有更純的標的（供應商、代工、原料）。必須輸出一個百分比，低於門檻直接丟掉。這層擋掉的爛點子會比其他四層加起來還多。</p>
+        </div>
+        <div class="how"><b>Claude</b> 讀 10-K / 年報<br>抽 segment revenue<br>→ ticker + 曝險 %<br>低於門檻自動退件</div>
+      </div>
+
+      <div class="layer">
+        <div class="n">04</div>
+        <div>
+          <h3>濾網　市場已經知道了嗎</h3>
+          <p class="body">Camillo 的第二問，自動化版。掃券商報告、新聞量、法說會逐字稿有沒有提過、選擇權隱含波動、以及股價是否已經先動。輸出一個 0–100 的「已知度」，這是整個 app 的靈魂欄位。</p>
+        </div>
+        <div class="how">新聞 / 分析師覆蓋<br>法說逐字稿檢索<br>IV 與價量是否已反應<br>→ 已知度分數</div>
+      </div>
+
+      <div class="layer">
+        <div class="n">05</div>
+        <div>
+          <h3>紀律　假說日誌與校準</h3>
+          <p class="body">唯一能讓你逐年變強的一層。進場前強制寫下：我看到什麼、為什麼華爾街看不到、什麼證據會證明我錯、預計多久兌現。到期系統強制回顧並計分。三個月後你會知道自己在哪類趨勢上真的有邊。</p>
+        </div>
+        <div class="how">假說卡 + 到期提醒<br>事後 Brier 分數<br>分類命中率<br>→ 個人校準報告</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="stack">
+    <div class="stack-sm">
+      <div class="eyebrow">資料源</div>
+      <h2>從哪裡撈</h2>
+      <p class="lede">優先做「訊號密度高 × 取得成本低」的那格。前四個就足以撐起 MVP；衛星影像、信用卡流水那類機構級資料不要碰，你在那條賽道沒有勝算。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>來源</th><th>抓什麼</th><th>為什麼有效</th><th>取得</th></tr></thead>
+        <tbody>
+          <tr><td class="src">Reddit</td><td>子版留言全文、新主題湧現</td><td>文字長、有脈絡，最適合語意分群</td><td><span class="pill hi">官方 API</span></td></tr>
+          <tr><td class="src">YouTube</td><td>留言區、影片標題、觀看加速度</td><td>開箱與評測是購買意圖最濃的地方</td><td><span class="pill hi">Data API</span></td></tr>
+          <tr><td class="src">Google Trends</td><td>搜尋量的區域與時間分布</td><td>Camillo 原版武器，仍是最好的「意圖」代理</td><td><span class="pill hi">免費</span></td></tr>
+          <tr><td class="src">App / 遊戲榜</td><td>排名變動、評論湧入</td><td>數位產品的營收先行指標，每日更新</td><td><span class="pill hi">公開頁</span></td></tr>
+          <tr><td class="src">徵才職缺</td><td>某公司某部門的 JD 數量與內容</td><td>公司在擴張哪條線，比財報早一到兩季說出口</td><td><span class="pill hi">公開頁</span></td></tr>
+          <tr><td class="src">電商榜單</td><td>類目 Best Seller 名次、上架與缺貨</td><td>等同線上版的「到藥妝店蹲點看架上空了」</td><td><span class="pill mid">需爬蟲</span></td></tr>
+          <tr><td class="src">TikTok</td><td>聲量、hashtag、留言</td><td>擴散最快但雜訊最高，只當觸發不當證據</td><td><span class="pill mid">第三方</span></td></tr>
+          <tr><td class="src">線下</td><td>你自己的眼睛：店頭、朋友、同溫層</td><td>唯一沒人能複製、也沒有 API 的資料源</td><td><span class="pill hi">免費</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="stack">
+    <div class="stack-sm">
+      <div class="eyebrow">介面</div>
+      <h2>五個畫面</h2>
+      <p class="lede">這是工具不是文件，所以資訊設計優先於排版：狀態要用形狀和顏色編碼，一眼掃得出哪張卡值得停下來。</p>
+    </div>
+    <div class="screens">
+
+      <div class="screen">
+        <div class="cap">
+          <h3>1　訊號雷達</h3>
+          <p>每張卡是一個假說，不是一檔股票。沒通過營收曝險門檻的不進來。</p>
+        </div>
+        <div class="demo stack-sm">
+          <div class="card">
+            <div class="top"><span class="tk">ELF</span><span class="pill hi">曝險 71%</span></div>
+            <p class="txt">美妝子版出現新主題群「平價替代」，14 天內留言量 ×4.2，購買意圖佔比 63%</p>
+            <div class="metric"><span>加速度</span><b>+318%</b></div>
+            <div class="metric"><span>已知度</span><b>22 / 100</b></div>
+          </div>
+          <div class="card" style="opacity:.6">
+            <div class="top"><span class="tk">XYZ</span><span class="pill mid">曝險 6%</span></div>
+            <p class="txt">趨勢成立，但只佔母公司營收 6%，已自動退件</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="cap">
+          <h3>2　已知度儀表</h3>
+          <p>整個 app 的守門員。分數越高代表市場越已消化，機會越小。</p>
+        </div>
+        <div class="demo stack-sm">
+          <div class="card">
+            <div class="top"><span class="tk">ELF</span><span class="mono" style="font-size:20px;color:var(--good)">22</span></div>
+            <div class="gauge"><span style="width:22%"></span></div>
+            <div class="gaugelab"><span>窗口敞開</span><span>已 price in</span></div>
+            <div class="metric"><span>分析師提及</span><b>0 篇</b></div>
+            <div class="metric"><span>法說逐字稿</span><b>未出現</b></div>
+            <div class="metric"><span>股價已反應</span><b>否</b></div>
+          </div>
+          <div class="card">
+            <div class="top"><span class="tk">ABC</span><span class="mono" style="font-size:20px;color:var(--warn)">78</span></div>
+            <div class="gauge warn"><span style="width:78%"></span></div>
+            <div class="gaugelab"><span>窗口敞開</span><span>已 price in</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="cap">
+          <h3>3　時間差圖</h3>
+          <p>社群熱度曲線疊股價曲線。你賺的就是這兩條線之間的落差，看得見才抓得住。</p>
+        </div>
+        <div class="demo">
+          <div class="card">
+            <svg class="lagchart" viewBox="0 0 260 120" role="img" aria-label="社群熱度曲線在早期起飛，股價曲線約 35 天後才跟上">
+              <g stroke="var(--rule)" stroke-width="1">
+                <line x1="0" y1="30" x2="260" y2="30"/><line x1="0" y1="60" x2="260" y2="60"/><line x1="0" y1="90" x2="260" y2="90"/>
+              </g>
+              <rect x="80" y="8" width="80" height="104" fill="var(--accent)" opacity="0.09"/>
+              <path d="M0,105 L40,102 L60,96 L80,74 L110,50 L140,30 L180,20 L220,16 L260,14" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+              <path d="M0,110 L60,109 L100,107 L130,103 L160,88 L190,62 L220,44 L260,32" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 3"/>
+              <circle cx="80" cy="74" r="3.5" fill="var(--accent)"/>
+              <circle cx="160" cy="88" r="3.5" fill="var(--ink-2)"/>
+              <text x="84" y="20" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--accent)">套利窗口 ≈ 35 天</text>
+            </svg>
+            <div class="metric"><span style="color:var(--accent)">━ 社群熱度</span><span>┈ 股價</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="cap">
+          <h3>4　假說日誌</h3>
+          <p>不填完不准建倉。重點是「什麼會證明我錯」，這欄逼你事前就想好出場。</p>
+        </div>
+        <div class="demo">
+          <div class="card log">
+            <div><span class="k">看到什麼　</span><span class="v">留言群 ×4.2</span></div>
+            <div><span class="k">華爾街盲點</span><span class="v">通路數據落後 6 週</span></div>
+            <div><span class="k">證偽條件　</span><span class="v">下季通路數據未增</span></div>
+            <div><span class="k">預計兌現　</span><span class="v">2026-11-05 財報</span></div>
+            <div><span class="k">部位大小　</span><span class="v">4% NAV</span></div>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--rule)"><span class="k">到期回顧　</span><span class="v" style="color:var(--good)">已排程</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="cap">
+          <h3>5　校準報告</h3>
+          <p>你的個人邊在哪。三個月後這頁會告訴你該只做哪兩類、永遠避開哪一類。</p>
+        </div>
+        <div class="demo">
+          <div class="card scorebars">
+            <div class="row"><span>美妝消費</span><span class="bar"><span style="width:74%"></span></span><b>74%</b></div>
+            <div class="row"><span>遊戲</span><span class="bar"><span style="width:68%"></span></span><b>68%</b></div>
+            <div class="row"><span>餐飲連鎖</span><span class="bar"><span style="width:51%"></span></span><b>51%</b></div>
+            <div class="row"><span>消費電子</span><span class="bar low"><span style="width:29%"></span></span><b>29%</b></div>
+            <div class="metric"><span>總樣本</span><b>41 筆假說</b></div>
+            <div class="metric"><span>Brier 分數</span><b>0.19</b></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="stack">
+    <div class="stack-sm">
+      <div class="eyebrow">實作順序</div>
+      <h2>三階段，先證明你有邊再寫程式</h2>
+      <p class="lede">最常見的失敗是先花三個月做爬蟲、資料庫和圖表，然後才發現自己根本挑不出好假說。順序要反過來。</p>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <div class="when">階段 0<em>第 1–4 週</em></div>
+        <div>
+          <h3>零程式碼，純手動</h3>
+          <ul>
+            <li>一個 Notion 表加上 Claude 對話，每天手動把五層問一遍</li>
+            <li>只做紙上交易，不下單，目標是累積 20–30 筆假說</li>
+            <li>真正的產出：搞清楚你的<strong>領域優勢在哪</strong>，也就是你天生就懂的那個圈子</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="when">階段 1<em>第 2–3 個月</em></div>
+        <div>
+          <h3>一個垂直領域自動化</h3>
+          <ul>
+            <li>只鎖階段 0 命中率最高的那一類，別想做全市場</li>
+            <li>Python 加排程：Reddit / YouTube / Trends 三源，每日跑分群與異常偵測</li>
+            <li>Claude API 做意圖標註與營收曝險抽取，結果寫進 SQLite 或 Postgres</li>
+            <li>介面先做「訊號雷達 + 假說日誌」兩頁就好</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="when">階段 2<em>第 4 個月起</em></div>
+        <div>
+          <h3>補上濾網與校準</h3>
+          <ul>
+            <li>已知度分數（新聞覆蓋、法說逐字稿、IV、價量），這是最能提升勝率的一塊</li>
+            <li>時間差圖與校準報告上線，用歷史資料回測你的門檻設定</li>
+            <li>推播規則：只有「曝險高於門檻，且已知度低於 40」才准吵你</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="stack">
+    <div class="stack-sm">
+      <div class="eyebrow">誠實的部分</div>
+      <h2>在開始之前要接受的四件事</h2>
+    </div>
+    <div class="risks">
+      <div class="risk">
+        <h3>倖存者偏差</h3>
+        <p>用同樣方法賠光的人不會出書，也不會被寫進《Unknown Market Wizards》。他的高年化報酬是自陳數字，且來自高度集中加槓桿的部位。方法可學，結果不可假設。</p>
+      </div>
+      <div class="risk">
+        <h3>窗口本來就在縮</h3>
+        <p>另類資料的商品化，有一部分正是他自己推動的。設計時要假設「純聲量訊號」的半衰期只會越來越短，價值必須來自語意層和映射層。</p>
+      </div>
+      <div class="risk">
+        <h3>LLM 會很有說服力地講錯話</h3>
+        <p>營收曝險那層一定要能點回原始財報段落。看起來合理但沒有出處的 ticker 映射，是最貴的一種幻覺。</p>
+      </div>
+      <div class="risk">
+        <h3>資料與合規邊界</h3>
+        <p>爬蟲要看各站服務條款，個資不要落地。任何來自非公開管道的資訊都不能拿來交易——社交套利吃的是公開資訊的解讀差，不是取得差。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>這份規格書描述的是研究工具，不是投資建議。所有分數與門檻都需要用你自己的實測資料校準。</p>
+</footer>
+
+</div>
