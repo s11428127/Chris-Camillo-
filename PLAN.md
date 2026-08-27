@@ -3,7 +3,7 @@
 > 這份文件是本專案的「上下文載體」。Claude Code 的終端機對話不會同步到手機，
 > 但這個檔案會。任何新 session（電腦或手機）開始前先讀這份，就能接上進度。
 
-最後更新：2026-08-26
+最後更新：2026-08-27
 
 ---
 
@@ -162,7 +162,8 @@ IV、選擇權、Brier 分數都是階段 2 以後的事，現在跳過。
 
 ## 9. 待辦
 
-- [ ] 建 GitHub private repo 並 push（需先裝 gh CLI 或手動建 repo）
+- [x] push 到 GitHub：https://github.com/s11428127/Chris-Camillo-
+- [x] GitHub Pages 上線：**https://s11428127.github.io/Chris-Camillo-/**（main / docs）
 - [x] 階段 0：假說卡模板 + 五層檢查清單 → `stage0/`
 - [x] 決定第一個垂直領域：**半導體 / 科技供應鏈**
 - [x] 新手上路文件：`stage0/concepts.md` + 完整範例卡
