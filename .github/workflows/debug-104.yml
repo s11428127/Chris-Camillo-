@@ -1,0 +1,36 @@
+name: DEBUG · 探 104 端點
+
+# 暫時性的工具：104 的搜尋端點換過幾次，這個 workflow 把幾個候選端點的
+# 原始回傳印出來，好決定 fetch_104.py 該打哪一個。查完就刪。
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 探端點
+        run: |
+          KW=$(python3 -c "import urllib.parse;print(urllib.parse.quote('洋基工程'))")
+          UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+          probe () {
+            echo "══════════════════════════════════════════"
+            echo "URL: $1"
+            curl -s -D /tmp/h -o /tmp/b --max-time 25 \
+              -H "User-Agent: $UA" \
+              -H 'Referer: https://www.104.com.tw/jobs/search/' \
+              -H 'Accept: application/json, text/plain, */*' \
+              -H 'Accept-Language: zh-TW,zh;q=0.9' \
+              ${2:+-H "$2"} \
+              "$1"
+            head -1 /tmp/h
+            grep -i '^content-type' /tmp/h || true
+            echo "--- body 前 700 字 ---"
+            head -c 700 /tmp/b; echo
+          }
+          probe "https://www.104.com.tw/jobs/search/api/jobs?keyword=${KW}&mode=s&page=1&pageSize=20&order=15&asc=0&jobsource=index_s"
+          probe "https://www.104.com.tw/jobs/search/api/jobs?keyword=${KW}&mode=s&page=1&pageSize=20&order=15&asc=0&jobsource=index_s" 'X-Requested-With: XMLHttpRequest'
+          probe "https://www.104.com.tw/jobs/search/list?ro=0&keyword=${KW}&order=15&asc=0&page=1&mode=s&jobsource=2018indexpoc"
+          probe "https://www.104.com.tw/jobs/search/?keyword=${KW}&order=15"
+          echo "══════ HTML 裡找總數關鍵字 ══════"
+          grep -oE '(共[^<]{0,20}筆|totalCount[^,]{0,20}|"total"[^,]{0,20})' /tmp/b | head -20 || echo "沒找到"

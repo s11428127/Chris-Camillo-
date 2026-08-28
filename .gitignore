@@ -6,6 +6,8 @@ venv/
 .env.local
 *.sqlite
 *.db
-data/
+# data/ 是巡邏產出的每日快照，要進版控（Actions 每天 commit 回來）
+# 大型或暫存資料放 data/tmp/
+data/tmp/
 .DS_Store
 node_modules/
