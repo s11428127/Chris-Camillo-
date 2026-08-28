@@ -19,6 +19,7 @@ import pathlib
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
@@ -30,6 +31,9 @@ TW = timezone(timedelta(hours=8))
 REVENUE_LISTED = "https://openapi.twse.com.tw/v1/opendata/t187ap05_L"      # 上市
 REVENUE_OTC = "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O"      # 上櫃
 STOCK_DAY = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY"
+# 上櫃股（茂達、雍智、精測、弘塑、旺矽…）不在證交所的 STOCK_DAY 裡，
+# 櫃買中心只給「今天的收盤」，所以近月漲幅要靠自己累積的快照回推。
+TPEX_DAILY = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes"
 
 UA = "signal-window/0.1 (research project; contact via github.com/s11428127/Chris-Camillo-)"
 TIMEOUT = 30
@@ -37,8 +41,9 @@ SLEEP = 1.5
 
 
 def get_json(url, params=None):
+    # 注意：urllib.parse 一定要在模組層 import。在函式裡 import 會讓 urllib
+    # 變成區域名稱，同一個函式裡的 urllib.request 就會炸掉（2026-08-28 踩過）。
     if params:
-        import urllib.parse
         url = f"{url}?{urllib.parse.urlencode(params)}"
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
@@ -91,6 +96,36 @@ def fetch_prices(code, yyyymmdd):
     }
 
 
+def fetch_tpex_closes(codes):
+    """櫃買中心：一個請求拿全上櫃今日收盤。回傳 {代號: (收盤, 成交股數)}。"""
+    out = {}
+    for row in get_json(TPEX_DAILY):
+        code = row.get("SecuritiesCompanyCode") or row.get("Code")
+        if code in codes:
+            out[code] = (_num(row.get("Close") or row.get("ClosingPrice")),
+                         _num(row.get("TradingShares") or row.get("TradeVolume")))
+    return out
+
+
+def history_change(code, today_close):
+    """用我們自己存的快照回推近月漲幅（上櫃股專用）。不足兩天就回 None。"""
+    if today_close is None:
+        return None
+    closes = []
+    for p in sorted(OUTDIR.glob("*.json"))[-25:]:
+        try:
+            snap = json.loads(p.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        for r in snap.get("results", []):
+            if r["code"] == code and (r.get("price") or {}).get("最新收盤"):
+                closes.append(r["price"]["最新收盤"])
+    if not closes:
+        return None
+    first = closes[0]
+    return round((today_close - first) / first * 100, 2) if first else None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=datetime.now(TW).strftime("%Y-%m-%d"))
@@ -104,6 +139,11 @@ def main():
     for e in rev_errors:
         print(f"⚠️  {e}", file=sys.stderr)
 
+    try:
+        tpex = fetch_tpex_closes(codes)
+    except Exception as e:  # noqa: BLE001
+        tpex, _ = {}, rev_errors.append(f"櫃買中心收盤表: {e}")
+
     month = args.date.replace("-", "")[:6] + "01"
     results, ok = [], 0
     for i, c in enumerate(companies):
@@ -116,7 +156,19 @@ def main():
         except urllib.error.HTTPError as e:
             entry["error"] = f"HTTP {e.code}"
         except Exception as e:  # noqa: BLE001
-            entry["error"] = str(e)
+            # 證交所查不到通常代表它是上櫃股，改走櫃買中心
+            close, vol = tpex.get(c["code"], (None, None))
+            if close is not None:
+                entry["price"] = {
+                    "近月漲幅%": history_change(c["code"], close),
+                    "最新收盤": close,
+                    "平均成交股數": vol,
+                    "交易日數": None,
+                    "來源": "櫃買中心（近月漲幅由本專案自己的快照回推，需要累積天數）",
+                }
+                ok += 1
+            else:
+                entry["error"] = f"證交所：{e}；櫃買中心也沒有這檔"
         results.append(entry)
         print(f"  {c['code']} {c['name']:<8} "
               f"價:{entry['price']['近月漲幅%'] if entry['price'] else 'FAIL'} "
