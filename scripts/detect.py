@@ -22,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 JOBS = ROOT / "data" / "jobs"
+MARKET = ROOT / "data" / "market"
 OUT = ROOT / "data" / "anomalies"
 TW = timezone(timedelta(hours=8))
 
@@ -30,6 +31,10 @@ MIN_COUNT = 8            # 絕對數量低於這個不看，避免小數字的�
 RATIO_UP = 1.5           # 相對基線 +50% 以上算跳增
 RATIO_DOWN = 0.6         # 相對基線 -40% 以下算縮編（抽單的先行訊號）
 MIN_DELTA = 5            # 同時要求絕對變化量，擋掉 9→14 這種
+
+REV_MOM = 20.0           # 月營收月增率絕對值超過這個算異常
+REV_YOY = 30.0           # 月營收年增率絕對值超過這個算異常
+PRICE_RUN = 20.0         # 近一月漲幅超過這個 → auto-flow.md 已知度 +20
 
 
 def load_snapshots():
@@ -59,6 +64,54 @@ def classify(latest, baseline):
     return None
 
 
+def market_section(date):
+    """證交所開放資料：月營收異常，以及餵已知度公式的近月漲幅。"""
+    snaps = sorted(MARKET.glob("*.json"))
+    if not snaps:
+        return ["", "## 證交所開放資料", "",
+                "沒有市場快照。先跑 `python3 scripts/fetch_twse.py`。"]
+    snap = json.loads(snaps[-1].read_text(encoding="utf-8"))
+    lines = ["", f"## 證交所開放資料（{snap['date']}）", "",
+             "| 代號 | 公司 | 資料年月 | 月增率 | 年增率 | 近月漲幅 | 已知度提示 |",
+             "|---|---|---|---|---|---|---|"]
+    notes = []
+    for r in snap["results"]:
+        rev = r.get("revenue") or {}
+        price = r.get("price") or {}
+        mom, yoy = rev.get("上月比較增減%"), rev.get("去年同月增減%")
+        run = price.get("近月漲幅%")
+
+        def f(v, suffix="%"):
+            try:
+                return f"{float(v):.1f}{suffix}"
+            except (TypeError, ValueError):
+                return "—"
+
+        hint = ""
+        if run is not None and run >= PRICE_RUN:
+            hint = "**已 price in 的可能性高（+20）**"
+            notes.append(f"- {r['name']} {r['code']}：近月漲幅 {run:.1f}%，"
+                         "依 auto-flow.md 公式已知度 +20")
+        for label, val, thr in (("月增率", mom, REV_MOM), ("年增率", yoy, REV_YOY)):
+            try:
+                if abs(float(val)) >= thr:
+                    notes.append(f"- {r['name']} {r['code']}：{label} {float(val):.1f}%"
+                                 f"（{rev.get('資料年月')}）—— 硬數據，可拿來驗證既有假說")
+            except (TypeError, ValueError):
+                pass
+
+        lines.append(f"| {r['code']} | {r['name']} | {rev.get('資料年月') or '—'} | "
+                     f"{f(mom)} | {f(yoy)} | {f(run)} | {hint or '—'} |")
+
+    failed = [r for r in snap["results"] if r.get("error")]
+    if failed:
+        lines += ["", "抓取失敗（**不等於沒有資料**）：",
+                  *[f"- {r['code']} {r['name']}：{r['error']}" for r in failed]]
+    if notes:
+        lines += ["", "值得注意：", *notes]
+    return lines
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date")
@@ -66,8 +119,23 @@ def main():
 
     snaps = load_snapshots()
     if not snaps:
-        print("沒有任何快照，先跑 fetch_104.py", file=sys.stderr)
-        return 1
+        # 104 目前擋在 Cloudflare 後面（見 stage0/auto-flow.md），所以職缺快照
+        # 通常是空的。這不是錯誤，照樣輸出市場那半的報告。
+        date = args.date or datetime.now(TW).strftime("%Y-%m-%d")
+        lines = [f"# {date} · 巡邏偵測", "",
+                 "**沒有職缺資料。** 104 與 Dcard 擋在 Cloudflare 反機器人後面，",
+                 "第 01 層目前只有證交所開放資料這一條腿 —— 那是驗證層，不是領先訊號層。",
+                 "細節見 `stage0/auto-flow.md`。"]
+        lines += market_section(date)
+        lines += ["", "## 給巡邏任務的結論", "",
+                  "**無職缺訊號可判斷。** 只有月營收與價量可用，"
+                  "拿來驗證既有假說、以及餵已知度公式，不足以獨立開卡。", ""]
+        OUT.mkdir(parents=True, exist_ok=True)
+        path = OUT / f"{date}.md"
+        path.write_text("\n".join(lines), encoding="utf-8")
+        print("\n".join(lines))
+        print(f"\n寫入 {path.relative_to(ROOT)}", file=sys.stderr)
+        return 0
 
     if args.date:
         cur = next((s for s in snaps if s["date"] == args.date), None)
@@ -136,6 +204,8 @@ def main():
                   "以下公司今天沒有數字，**這不等於「開缺數是 0」**，是沒查成：", ""]
         for r in failed:
             lines.append(f"- {r['code']} {r['name']}：{r['error']}")
+
+    lines += market_section(cur["date"])
 
     lines += ["", "## 給巡邏任務的結論", ""]
     if anomalies:

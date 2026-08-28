@@ -144,7 +144,10 @@ IV、選擇權、Brier 分數都是階段 2 以後的事，現在跳過。
 - 只鎖階段 0 命中率最高的那一類，不做全市場
 - Python + 排程，先接三個源，每日跑分群與異常偵測
 - **⚠️ 爬蟲跑在 GitHub Actions，不要跑在 Claude 的雲端 session**：後者的出口代理
-  對 104、1111、Dcard、Google Trends、證交所 OpenAPI、PTT 全部回 403（8/28 實測）
+  對 104、1111、Dcard、Google Trends、證交所、PTT 全部回 403（8/28 實測）
+- **⚠️ 但就算在 Actions 上，104 與 Dcard 仍被 Cloudflare 擋**。也就是說
+  **領先訊號層整層都進不了自動化管線，只有驗證層（月營收、價量）可以自動**。
+  這是結構性的，不是實作沒做完 —— 詳見 `stage0/auto-flow.md`
 - Claude API 做意圖標註與營收曝險抽取，寫進 SQLite / Postgres
 - 介面先做「訊號雷達 + 假說日誌」兩頁
 
@@ -178,7 +181,9 @@ IV、選擇權、Brier 分數都是階段 2 以後的事，現在跳過。
 - [x] 新手上路文件：`stage0/concepts.md` + 完整範例卡
 - [x] 觀察名單 v1：`stage0/watchlist.md`（14 檔，含券商覆蓋度）
 - [x] 自動巡邏流程規格 + 決策卡格式：`stage0/auto-flow.md`、`stage0/decision-card.md`
-- [x] **104 職缺數抓取**：`scripts/fetch_104.py` + `scripts/detect.py`
+- [x] 證交所開放資料抓取：`scripts/fetch_twse.py`（月營收 + 近月價量）
+- [ ] ~~104 職缺數抓取~~ ❌ **擋在 Cloudflare 後面**，程式碼留著（`scripts/fetch_104.py`）
+      但不繞過。要用只能本機跑或人工貼數字，見 `stage0/auto-flow.md`
 - [x] **每日巡邏排程**：GitHub Actions 台灣時間每天 20:00
       （`.github/workflows/daily-patrol.yml`），Claude 巡邏任務 20:30 接手
 - [ ] 前 7 天先養基線，期間不會有卡，這是設計行為
