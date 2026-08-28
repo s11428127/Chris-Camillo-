@@ -32,8 +32,11 @@ RATIO_UP = 1.5           # 相對基線 +50% 以上算跳增
 RATIO_DOWN = 0.6         # 相對基線 -40% 以下算縮編（抽單的先行訊號）
 MIN_DELTA = 5            # 同時要求絕對變化量，擋掉 9→14 這種
 
-REV_MOM = 20.0           # 月營收月增率絕對值超過這個算異常
-REV_YOY = 30.0           # 月營收年增率絕對值超過這個算異常
+# 月營收不看絕對值，看「跟名單裡其他家比」。理由：8/28 第一次實跑，年增率 30%
+# 以上的有 12/14 家 —— 半導體整體都在成長，絕對門檻等於沒過濾。
+# 改成偏離名單中位數多少個百分點，門檻會隨產業景氣自己校準。
+REV_MOM_GAP = 20.0       # 月增率超出名單中位數這麼多個百分點才算異常
+REV_YOY_GAP = 50.0       # 年增率同上
 PRICE_RUN = 20.0         # 近一月漲幅超過這個 → auto-flow.md 已知度 +20
 
 
@@ -74,6 +77,21 @@ def market_section(date):
     lines = ["", f"## 證交所開放資料（{snap['date']}）", "",
              "| 代號 | 公司 | 資料年月 | 月增率 | 年增率 | 近月漲幅 | 已知度提示 |",
              "|---|---|---|---|---|---|---|"]
+    def val(r, key):
+        try:
+            return float((r.get("revenue") or {}).get(key))
+        except (TypeError, ValueError):
+            return None
+
+    med = {}
+    for key in ("上月比較增減%", "去年同月增減%"):
+        vals = [v for v in (val(r, key) for r in snap["results"]) if v is not None]
+        med[key] = statistics.median(vals) if vals else None
+    if med["去年同月增減%"] is not None:
+        lines.insert(2, f"名單中位數：月增率 {med['上月比較增減%']:.1f}%、"
+                        f"年增率 {med['去年同月增減%']:.1f}%（異常＝偏離中位數，不是絕對值大）")
+        lines.insert(3, "")
+
     notes = []
     for r in snap["results"]:
         rev = r.get("revenue") or {}
@@ -92,13 +110,19 @@ def market_section(date):
             hint = "**已 price in 的可能性高（+20）**"
             notes.append(f"- {r['name']} {r['code']}：近月漲幅 {run:.1f}%，"
                          "依 auto-flow.md 公式已知度 +20")
-        for label, val, thr in (("月增率", mom, REV_MOM), ("年增率", yoy, REV_YOY)):
+        for label, v, key, gap in (("月增率", mom, "上月比較增減%", REV_MOM_GAP),
+                                   ("年增率", yoy, "去年同月增減%", REV_YOY_GAP)):
             try:
-                if abs(float(val)) >= thr:
-                    notes.append(f"- {r['name']} {r['code']}：{label} {float(val):.1f}%"
-                                 f"（{rev.get('資料年月')}）—— 硬數據，可拿來驗證既有假說")
+                v = float(v)
             except (TypeError, ValueError):
-                pass
+                continue
+            m = med[key]
+            if m is None or abs(v - m) < gap:
+                continue
+            direction = "高出" if v > m else "低於"
+            notes.append(f"- {r['name']} {r['code']}：{label} {v:.1f}%，"
+                         f"{direction}名單中位數 {abs(v - m):.0f} 個百分點"
+                         f"（{rev.get('資料年月')}）—— 硬數據，可拿來驗證既有假說")
 
         lines.append(f"| {r['code']} | {r['name']} | {rev.get('資料年月') or '—'} | "
                      f"{f(mom)} | {f(yoy)} | {f(run)} | {hint or '—'} |")
