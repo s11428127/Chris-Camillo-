@@ -62,7 +62,7 @@
 ## 檔案
 
 - [concepts.md](concepts.md) — 名詞速成
-- [auto-flow.md](auto-flow.md) — **自動巡邏流程：誰做什麼、已知度計分公式**
+- [auto-flow.md](auto-flow.md) — **自動巡邏流程：誰做什麼、已知度計分公式、怎麼手動跑**
 - [decision-card.md](decision-card.md) — **決策卡模板（機器填 90%，你回兩題）**
 - [checklist.md](checklist.md) — 五層檢查清單，機器照這份跑；你想手動開卡時也用它
 - [hypothesis-card.md](hypothesis-card.md) — 舊的手寫假說卡模板，留作參考格式

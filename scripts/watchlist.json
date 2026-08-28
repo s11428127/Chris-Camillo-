@@ -1,0 +1,22 @@
+{
+  "_comment": "觀察名單的機器可讀版。人讀的版本在 stage0/watchlist.md，兩份要一起改。coverage 高的公司不會產生決策卡（見 stage0/auto-flow.md 的門檻），但仍然抓數字當產業對照組。company_id 是 104 的公司代碼，填了會比 keyword 搜尋精準很多 —— 打開 https://www.104.com.tw/company/<id> 對得上就是對的。",
+  "companies": [
+    {"code": "2303", "name": "聯電",     "tier": "A", "coverage": "極高", "keyword": "聯華電子",   "company_id": null},
+    {"code": "6770", "name": "力積電",   "tier": "A", "coverage": "高",   "keyword": "力晶積成",   "company_id": null},
+
+    {"code": "6138", "name": "茂達",     "tier": "B", "coverage": "中高", "keyword": "茂達電子",   "company_id": null},
+    {"code": "8081", "name": "致新",     "tier": "B", "coverage": "中高", "keyword": "致新科技",   "company_id": null},
+    {"code": "6415", "name": "矽力-KY",  "tier": "B", "coverage": "高",   "keyword": "矽力",       "company_id": null},
+
+    {"code": "6139", "name": "亞翔",     "tier": "C", "coverage": "中高", "keyword": "亞翔工程",   "company_id": null},
+    {"code": "2404", "name": "漢唐",     "tier": "C", "coverage": "極高", "keyword": "漢唐集成",   "company_id": null},
+    {"code": "6196", "name": "帆宣",     "tier": "C", "coverage": "高",   "keyword": "帆宣系統",   "company_id": null},
+    {"code": "6691", "name": "洋基工程", "tier": "C", "coverage": "中",   "keyword": "洋基工程",   "company_id": null},
+
+    {"code": "6683", "name": "雍智",     "tier": "D", "coverage": "中",   "keyword": "雍智科技",   "company_id": null},
+    {"code": "6510", "name": "精測",     "tier": "D", "coverage": "高",   "keyword": "中華精測",   "company_id": null},
+    {"code": "3131", "name": "弘塑",     "tier": "D", "coverage": "高",   "keyword": "弘塑科技",   "company_id": null},
+    {"code": "6223", "name": "旺矽",     "tier": "D", "coverage": "極高", "keyword": "旺矽科技",   "company_id": null},
+    {"code": "6515", "name": "穎崴",     "tier": "D", "coverage": "極高", "keyword": "穎崴科技",   "company_id": null}
+  ]
+}

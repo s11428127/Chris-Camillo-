@@ -1,0 +1,55 @@
+name: 每日巡邏 · 104 職缺數
+
+# 台灣時間每天 20:00（GitHub Actions 的 cron 是 UTC，20:00 TW = 12:00 UTC）
+# 注意：Actions 的排程在尖峰時可能延遲十幾分鐘，這對「每日一次」的用途無所謂。
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:        # 也可以在 Actions 頁面手動按一下就跑
+
+permissions:
+  contents: write           # 要把當天的快照 commit 回 repo
+
+concurrency:
+  group: daily-patrol
+  cancel-in-progress: false
+
+jobs:
+  patrol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 抓 104 職缺數
+        id: fetch
+        continue-on-error: true     # 全部抓失敗也要留紀錄，不能靜悄悄地什麼都沒有
+        run: python3 scripts/fetch_104.py
+
+      - name: 偵測異常
+        run: python3 scripts/detect.py
+
+      - name: Commit 結果
+        run: |
+          git config user.name  "signal-window-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "沒有變化，不 commit"
+          else
+            git commit -m "每日巡邏 $(TZ=Asia/Taipei date +%Y-%m-%d)：104 職缺數快照"
+            git push
+          fi
+
+      - name: 把異常報告貼到 Actions 摘要
+        if: always()
+        run: |
+          latest=$(ls -1 data/anomalies/*.md 2>/dev/null | tail -1)
+          if [ -n "$latest" ]; then
+            cat "$latest" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "今天沒有產生異常報告（抓取可能整批失敗，看上一步的 log）" >> "$GITHUB_STEP_SUMMARY"
+          fi

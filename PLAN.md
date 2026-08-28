@@ -143,6 +143,8 @@ IV、選擇權、Brier 分數都是階段 2 以後的事，現在跳過。
 ### 階段 1（第 2–3 個月）一個垂直領域自動化
 - 只鎖階段 0 命中率最高的那一類，不做全市場
 - Python + 排程，先接三個源，每日跑分群與異常偵測
+- **⚠️ 爬蟲跑在 GitHub Actions，不要跑在 Claude 的雲端 session**：後者的出口代理
+  對 104、1111、Dcard、Google Trends、證交所 OpenAPI、PTT 全部回 403（8/28 實測）
 - Claude API 做意圖標註與營收曝險抽取，寫進 SQLite / Postgres
 - 介面先做「訊號雷達 + 假說日誌」兩頁
 
@@ -176,10 +178,13 @@ IV、選擇權、Brier 分數都是階段 2 以後的事，現在跳過。
 - [x] 新手上路文件：`stage0/concepts.md` + 完整範例卡
 - [x] 觀察名單 v1：`stage0/watchlist.md`（14 檔，含券商覆蓋度）
 - [x] 自動巡邏流程規格 + 決策卡格式：`stage0/auto-flow.md`、`stage0/decision-card.md`
-- [ ] **把每日巡邏排成自動任務**（每天自動跑 01–04，有卡才通知）
-- [ ] **104 / 1111 職缺數抓取** ← 最高優先。結構化、可自動化，且是搜尋引擎
-      索引不到的真地面情報（搜尋只找得到已發布新聞 = 已知度本來就高）
+- [x] **104 職缺數抓取**：`scripts/fetch_104.py` + `scripts/detect.py`
+- [x] **每日巡邏排程**：GitHub Actions 台灣時間每天 20:00
+      （`.github/workflows/daily-patrol.yml`），Claude 巡邏任務 20:30 接手
+- [ ] 前 7 天先養基線，期間不會有卡，這是設計行為
+- [ ] 把 `scripts/watchlist.json` 的 `company_id` 填上，關鍵字搜尋才會精準
 - [ ] Dcard 科技版 + Google Trends（TW）抓取骨架
+- [ ] 1111 職缺數（104 穩定後再加，當交叉驗證）
 - [ ] 月營收驗證腳本（接證交所 OpenAPI），每月 10 日自動把到期卡推回來
 - [ ] 累積 20–30 筆假說（目前 1 筆，且是死卡）
 - [ ] PTT 抓取：**目前被出口代理封鎖**（ptt.cc + 四個鏡像，連兩天確認），
